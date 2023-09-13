@@ -1,6 +1,7 @@
 package com.example.sunnyweather.ui.place
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sunnyweather.databinding.FragmentPlaceBinding
+import com.example.sunnyweather.ui.weather.WeatherActivity
 
 class PlaceFragment:Fragment() {
 
@@ -34,6 +36,18 @@ class PlaceFragment:Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        //重新加载页面时，自动打开上一次访问的城市天气信息
+        if(viewModel.isSaved()){
+            val place=viewModel.getSavedPlace()
+            val intent =Intent(context,WeatherActivity::class.java).apply {
+                putExtra("location_lng",place.location.lng)
+                putExtra("location_lat",place.location.lat)
+                putExtra("place_name",place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
         val layoutManager=LinearLayoutManager(activity)
         //val recyclerView=requireView().findViewById<RecyclerView>(R.id.recyclerView)
         //recyclerView.layoutManager = layoutManager
